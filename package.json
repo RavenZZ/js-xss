@@ -1,8 +1,8 @@
 {
   "name": "xss",
   "main": "./lib/index.js",
-  "version": "0.2.2",
-  "description": "Sanitize untrusted HTML (to prevent XSS) with a configuration specified by a Whitelist. 根据白名单过滤HTML(防止XSS攻击)",
+  "version": "0.2.13",
+  "description": "Sanitize untrusted HTML (to prevent XSS) with a configuration specified by a Whitelist",
   "author": "leizongmin <leizongmin@gmail.com> (http://ucdok.com)",
   "contributors": [
     {
@@ -15,40 +15,28 @@
     "url": "git://github.com/leizongmin/js-xss.git"
   },
   "engines": {
-    "node": ">= 0.6.0"
+    "node": ">= 0.10.0"
   },
   "dependencies": {
-    "commander": "2.8.x",
-    "cssfilter": "0.0.5"
+    "commander": "^2.9.0",
+    "cssfilter": "0.0.7"
   },
   "devDependencies": {
-    "blanket": "1.1.5",
-    "browserify": "^9.0.8",
-    "mocha": "1.8.2",
-    "testling": "^1.7.1",
-    "uglify-js": "^2.4.19"
-  },
-  "testling": {
-    "preprocess": "./build",
-    "harness": "mocha-bdd",
-    "files": "test/*.js",
-    "browsers": [
-      "ie/6..latest",
-      "firefox/latest",
-      "chrome/latest",
-      "safari/5..latest",
-      "opera/11",
-      "opera/next"
-    ]
+    "browserify": "^13.0.1",
+    "coveralls": "^2.11.9",
+    "debug": "^2.2.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^3.0.2",
+    "uglify-js": "^2.6.1"
   },
   "bin": {
     "xss": "./bin/xss"
   },
   "scripts": {
-    "blanket": {
-      "pattern": "xss/lib"
-    },
-    "test": "mocha -t 5000"
+    "test": "export DEBUG=xss:* && mocha -t 5000",
+    "test-cov": "export DEBUG=xss:* && istanbul cover _mocha --report lcovonly -- -t 5000 -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "build": "./bin/build",
+    "prepublish": "npm run test && npm run build"
   },
   "licenses": [
     {

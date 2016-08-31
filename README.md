@@ -1,7 +1,25 @@
-[![NPM version](https://badge.fury.io/js/xss.png)](http://badge.fury.io/js/xss)
-[![Build Status](https://secure.travis-ci.org/leizongmin/js-xss.png?branch=master)](http://travis-ci.org/leizongmin/js-xss)
-[![Dependencies Status](https://david-dm.org/leizongmin/js-xss.png)](https://david-dm.org/leizongmin/js-xss)
-[![testling badge](https://ci.testling.com/leizongmin/js-xss.png)](https://ci.testling.com/leizongmin/js-xss)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Gittip][gittip-image]][gittip-url]
+[![David deps][david-image]][david-url]
+[![node version][node-image]][node-url]
+[![npm download][download-image]][download-url]
+
+[npm-image]: https://img.shields.io/npm/v/xss.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/xss
+[travis-image]: https://img.shields.io/travis/leizongmin/js-xss.svg?style=flat-square
+[travis-url]: https://travis-ci.org/leizongmin/js-xss
+[coveralls-image]: https://img.shields.io/coveralls/leizongmin/js-xss.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/leizongmin/js-xss?branch=master
+[gittip-image]: https://img.shields.io/gittip/leizongmin.svg?style=flat-square
+[gittip-url]: https://www.gittip.com/leizongmin/
+[david-image]: https://img.shields.io/david/leizongmin/js-xss.svg?style=flat-square
+[david-url]: https://david-dm.org/leizongmin/js-xss
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+[download-image]: https://img.shields.io/npm/dm/xss.svg?style=flat-square
+[download-url]: https://npmjs.org/package/xss
 
 Sanitize untrusted HTML (to prevent XSS) with a configuration specified by a Whitelist.
 ======
@@ -10,21 +28,15 @@ Sanitize untrusted HTML (to prevent XSS) with a configuration specified by a Whi
 
 --------------
 
-**[中文版文档](https://github.com/leizongmin/js-xss/blob/master/README.zh.md)**
-
 `xss` is a module used to filter input from users to prevent XSS attacks.
 ([What is XSS attack?](http://en.wikipedia.org/wiki/Cross-site_scripting))
 
-This module is needed for situations that allows users to input HTML for
-typesetting or formatting, including fourms, blogs, e-shops, etc.
+**Project Homepage:** http://jsxss.com
 
-The `xss` module controls the usage of tags and their attributes, according to
-the whitelist. It is also extendable with a series of APIs privided, which make
-it become more flexible, compares with other modules.
+**Try Online:** http://jsxss.com/en/try.html
 
-**Project Homepage:** https://github.com/leizongmin/js-xss
+**[中文版文档](https://github.com/leizongmin/js-xss/blob/master/README.zh.md)**
 
-**Try Online:** http://ucdok.com/project/xss/
 
 ---------------
 
@@ -37,9 +49,6 @@ it become more flexible, compares with other modules.
 
 ## Reference
 
-+ [XSS与字符编码的那些事儿 ---科普文](http://drops.wooyun.org/tips/689)
-+ [腾讯实例教程：那些年我们一起学XSS](http://www.wooyun.org/whitehats/%E5%BF%83%E4%BC%A4%E7%9A%84%E7%98%A6%E5%AD%90)
-+ [mXSS攻击的成因及常见种类](http://drops.wooyun.org/tips/956)
 + [XSS Filter Evasion Cheat Sheet](https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet)
 + [Data URI scheme](http://en.wikipedia.org/wiki/Data_URI_scheme)
 + [XSS with Data URI Scheme](http://hi.baidu.com/badzzzz/item/bdbafe83144619c199255f7b)
@@ -83,7 +92,7 @@ $ bower install https://github.com/leizongmin/js-xss.git
 
 ### On Node.js
 
-```JavaScript
+```javascript
 var xss = require('xss');
 var html = xss('<script>alert("xss");</script>');
 console.log(html);
@@ -93,7 +102,7 @@ console.log(html);
 
 Shim mode (reference file `test/test.html`):
 
-```HTML
+```html
 <script src="https://raw.github.com/leizongmin/js-xss/master/dist/xss.js"></script>
 <script>
 // apply function filterXSS in the same way
@@ -102,12 +111,18 @@ alert(html);
 </script>
 ```
 
-AMD mode (reference file `test/test_amd.html`):
+AMD mode - shim:
 
-```HTML
+```html
 <script>
 require.config({
-  baseUrl: './'
+  baseUrl: './',
+  paths: {
+    xss: 'https://raw.github.com/leizongmin/js-xss/master/dist/xss.js'
+  },
+  shim: {
+    xss: {exports: 'filterXSS'}
+  }
 })
 require(['xss'], function (xss) {
   var html = xss('<script>alert("xss");</scr' + 'ipt>');
@@ -150,7 +165,7 @@ For more details, please run `$ xss -h` to see it.
 When using the `xss()` function, the second parameter could be used to specify
 custom rules:
 
-```JavaScript
+```javascript
 options = {};  // Custom rules
 html = xss('<script>alert("xss");</script>', options);
 ```
@@ -158,7 +173,7 @@ html = xss('<script>alert("xss");</script>', options);
 To avoid passing `options` every time, you can also do it in a faster way by
 creating a `FilterXSS` instance:
 
-```JavaScript
+```javascript
 options = {};  // Custom rules
 myxss = new xss.FilterXSS(options);
 // then apply myxss.process()
@@ -172,7 +187,7 @@ Details of parameters in `options` would be described below.
 By specifying a `whiteList`, e.g. `{ 'tagName': [ 'attr-1', 'attr-2' ] }`. Tags
 and attributes not in the whitelist would be filter out. For example:
 
-```JavaScript
+```javascript
 // only tag a and its attributes href, title, target are allowed
 var options = {
   whiteList: {
@@ -191,7 +206,7 @@ For the default whitelist, please refer `xss.whiteList`.
 
 By specifying the handler function with `onTag`:
 
-```JavaScript
+```javascript
 function onTag (tag, html, options) {
   // tag is the name of current tag, e.g. 'a' for tag <a>
   // html is the HTML of this tag, e.g. '<a>' for tag <a>
@@ -211,7 +226,7 @@ function onTag (tag, html, options) {
 
 By specifying the handler function with `onTagAttr`:
 
-```JavaScript
+```javascript
 function onTagAttr (tag, name, value, isWhiteAttr) {
   // tag is the name of current tag, e.g. 'a' for tag <a>
   // name is the name of current attribute, e.g. 'href' for href="#"
@@ -227,7 +242,7 @@ function onTagAttr (tag, name, value, isWhiteAttr) {
 
 By specifying the handler function with `onIgnoreTag`:
 
-```JavaScript
+```javascript
 function onIgnoreTag (tag, html, options) {
   // Parameters are the same with onTag
   // If a string is returned, the tag would be replaced with the string
@@ -240,7 +255,7 @@ function onIgnoreTag (tag, html, options) {
 
 By specifying the handler function with `onIgnoreTagAttr`:
 
-```JavaScript
+```javascript
 function onIgnoreTagAttr (tag, name, value, isWhiteAttr) {
   // Parameters are the same with onTagAttr
   // If a string is returned, the value would be replaced with this string
@@ -253,7 +268,7 @@ function onIgnoreTagAttr (tag, name, value, isWhiteAttr) {
 By specifying the handler function with `escapeHtml`. Following is the default
 function **(Modification is not recommended)**:
 
-```JavaScript
+```javascript
 function escapeHtml (html) {
   return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -263,7 +278,7 @@ function escapeHtml (html) {
 
 By specifying the handler function with `safeAttrValue`:
 
-```JavaScript
+```javascript
 function safeAttrValue (tag, name, value) {
   // Parameters are the same with onTagAttr (without options)
   // Return the value as a string
@@ -283,13 +298,13 @@ Example:
 
 If `stripIgnoreTag = true` is set, the following code:
 
-```HTML
+```html
 code:<script>alert(/xss/);</script>
 ```
 
 would output filtered:
 
-```HTML
+```html
 code:alert(/xss/);
 ```
 
@@ -305,13 +320,13 @@ Example:
 
 If `stripIgnoreTagBody = ['script']` is set, the following code:
 
-```HTML
+```html
 code:<script>alert(/xss/);</script>
 ```
 
 would output filtered:
 
-```HTML
+```html
 code:
 ```
 
@@ -326,13 +341,13 @@ Example:
 
 If `allowCommentTag = false` is set, the following code:
 
-```HTML
+```html
 code:<!-- something --> END
 ```
 
 would output filtered:
 
-```HTML
+```html
 code: END
 ```
 
@@ -341,7 +356,7 @@ code: END
 
 ### Allow attributes of whitelist tags start with `data-`
 
-```JavaScript
+```javascript
 var source = '<div a="1" b="2" data-a="3" data-b="4">hello</div>';
 var html = xss(source, {
   onIgnoreTagAttr: function (tag, name, value, isWhiteAttr) {
@@ -357,7 +372,7 @@ console.log('%s\nconvert to:\n%s', source, html);
 
 Result:
 
-```
+```html
 <div a="1" b="2" data-a="3" data-b="4">hello</div>
 convert to:
 <div data-a="3" data-b="4">hello</div>
@@ -365,7 +380,7 @@ convert to:
 
 ### Allow tags start with `x-`
 
-```JavaScript
+```javascript
 var source = '<x><x-1>he<x-2 checked></x-2>wwww</x-1><a>';
 var html = xss(source, {
   onIgnoreTag: function (tag, html, options) {
@@ -381,7 +396,7 @@ console.log('%s\nconvert to:\n%s', source, html);
 
 Result:
 
-```
+```html
 <x><x-1>he<x-2 checked></x-2>wwww</x-1><a>
 convert to:
 &lt;x&gt;<x-1>he<x-2 checked></x-2>wwww</x-1><a>
@@ -389,7 +404,7 @@ convert to:
 
 ### Parse images in HTML
 
-```JavaScript
+```javascript
 var source = '<img src="img1">a<img src="img2">b<img src="img3">c<img src="img4">d';
 var list = [];
 var html = xss(source, {
@@ -409,14 +424,14 @@ console.log('image list:\n%s', list.join(', '));
 
 Result:
 
-```
+```html
 image list:
 img1, img2, img3, img4
 ```
 
 ### Filter out HTML tags (keeps only plain text)
 
-```JavaScript
+```javascript
 var source = '<strong>hello</strong><script>alert(/xss/);</script>end';
 var html = xss(source, {
   whiteList:          [],        // empty, means filter out all tags
@@ -430,11 +445,35 @@ console.log('text: %s', html);
 
 Result:
 
-```
+```html
 text: helloend
 ```
 
 
 ## License
 
+```
+Copyright (c) 2012-2016 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
+http://ucdok.com
+
 The MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```

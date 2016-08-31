@@ -1,7 +1,25 @@
-[![NPM version](https://badge.fury.io/js/xss.png)](http://badge.fury.io/js/xss)
-[![Build Status](https://secure.travis-ci.org/leizongmin/js-xss.png?branch=master)](http://travis-ci.org/leizongmin/js-xss)
-[![Dependencies Status](https://david-dm.org/leizongmin/js-xss.png)](https://david-dm.org/leizongmin/js-xss)
-[![testling badge](https://ci.testling.com/leizongmin/js-xss.png)](https://ci.testling.com/leizongmin/js-xss)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Gittip][gittip-image]][gittip-url]
+[![David deps][david-image]][david-url]
+[![node version][node-image]][node-url]
+[![npm download][download-image]][download-url]
+
+[npm-image]: https://img.shields.io/npm/v/xss.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/xss
+[travis-image]: https://img.shields.io/travis/leizongmin/js-xss.svg?style=flat-square
+[travis-url]: https://travis-ci.org/leizongmin/js-xss
+[coveralls-image]: https://img.shields.io/coveralls/leizongmin/js-xss.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/leizongmin/js-xss?branch=master
+[gittip-image]: https://img.shields.io/gittip/leizongmin.svg?style=flat-square
+[gittip-url]: https://www.gittip.com/leizongmin/
+[david-image]: https://img.shields.io/david/leizongmin/js-xss.svg?style=flat-square
+[david-url]: https://david-dm.org/leizongmin/js-xss
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+[download-image]: https://img.shields.io/npm/dm/xss.svg?style=flat-square
+[download-url]: https://npmjs.org/package/xss
 
 根据白名单过滤HTML(防止XSS攻击)
 ======
@@ -15,9 +33,9 @@
 格式控制相关的HTML的场景，`xss`模块通过白名单来控制允许的标签及相关的标签属性，
 另外还提供了一系列的接口以便用户扩展，比其他同类模块更为灵活。
 
-**项目主页：** https://github.com/leizongmin/js-xss
+**项目主页：** http://jsxss.com
 
-**在线测试：** http://ucdok.com/project/xss/
+**在线测试：** http://jsxss.com/zh/try.html
 
 ---------------
 
@@ -76,7 +94,7 @@ $ bower install https://github.com/leizongmin/js-xss.git
 
 ### 在Node.js中使用
 
-```JavaScript
+```javascript
 var xss = require('xss');
 var html = xss('<script>alert("xss");</script>');
 console.log(html);
@@ -86,7 +104,7 @@ console.log(html);
 
 Shim模式（参考文件 `test/test.html`）:
 
-```HTML
+```html
 <script src="https://raw.github.com/leizongmin/js-xss/master/dist/xss.js"></script>
 <script>
 // 使用函数名 filterXSS，用法一样
@@ -97,10 +115,16 @@ alert(html);
 
 AMD模式（参考文件 `test/test_amd.html`）:
 
-```HTML
+```html
 <script>
 require.config({
-  baseUrl: './'
+  baseUrl: './',
+  paths: {
+    xss: 'https://raw.github.com/leizongmin/js-xss/master/dist/xss.js'
+  },
+  shim: {
+    xss: {exports: 'filterXSS'}
+  }
 })
 require(['xss'], function (xss) {
   var html = xss('<script>alert("xss");</scr' + 'ipt>');
@@ -141,7 +165,7 @@ $ xss -t
 
 在调用 `xss()` 函数进行过滤时，可通过第二个参数来设置自定义规则：
 
-```JavaScript
+```javascript
 options = {};  // 自定义规则
 html = xss('<script>alert("xss");</script>', options);
 ```
@@ -163,7 +187,7 @@ html = myxss.process('<script>alert("xss");</script>');
 通过 `whiteList` 来指定，格式为：`{'标签名': ['属性1', '属性2']}`。不在白名单上
 的标签将被过滤，不在白名单上的属性也会被过滤。以下是示例：
 
-```JavaScript
+```javascript
 // 只允许a标签，该标签只允许href, title, target这三个属性
 var options = {
   whiteList: {
@@ -182,7 +206,7 @@ var options = {
 
 通过 `onTag` 来指定相应的处理函数。以下是详细说明：
 
-```JavaScript
+```javascript
 function onTag (tag, html, options) {
   // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
   // html是该标签的HTML，比如<a>标签，则html的值是'<a>'
@@ -202,7 +226,7 @@ function onTag (tag, html, options) {
 
 通过 `onTagAttr` 来指定相应的处理函数。以下是详细说明：
 
-```JavaScript
+```javascript
 function onTagAttr (tag, name, value, isWhiteAttr) {
   // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
   // name是当前属性的名称，比如href="#"，则name的值是'href'
@@ -219,7 +243,7 @@ function onTagAttr (tag, name, value, isWhiteAttr) {
 
 通过 `onIgnoreTag` 来指定相应的处理函数。以下是详细说明：
 
-```JavaScript
+```javascript
 function onIgnoreTag (tag, html, options) {
   // 参数说明与onTag相同
   // 如果返回一个字符串，则当前标签将被替换为该字符串
@@ -231,7 +255,7 @@ function onIgnoreTag (tag, html, options) {
 
 通过 `onIgnoreTagAttr` 来指定相应的处理函数。以下是详细说明：
 
-```JavaScript
+```javascript
 function onIgnoreTagAttr (tag, name, value, isWhiteAttr) {
   // 参数说明与onTagAttr相同
   // 如果返回一个字符串，则当前属性值将被替换为该字符串
@@ -243,7 +267,7 @@ function onIgnoreTagAttr (tag, name, value, isWhiteAttr) {
 
 通过 `escapeHtml` 来指定相应的处理函数。以下是默认代码 **（不建议修改）** ：
 
-```JavaScript
+```javascript
 function escapeHtml (html) {
   return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -253,7 +277,7 @@ function escapeHtml (html) {
 
 通过 `safeAttrValue` 来指定相应的处理函数。以下是详细说明：
 
-```JavaScript
+```javascript
 function safeAttrValue (tag, name, value) {
   // 参数说明与onTagAttr相同（没有options参数）
   // 返回一个字符串表示该属性值
@@ -273,13 +297,13 @@ function safeAttrValue (tag, name, value) {
 
 当设置 `stripIgnoreTag = true`时，以下代码
 
-```HTML
+```html
 code:<script>alert(/xss/);</script>
 ```
 
 过滤后将输出
 
-```HTML
+```html
 code:alert(/xss/);
 ```
 
@@ -295,13 +319,13 @@ code:alert(/xss/);
 
 当设置 `stripIgnoreTagBody = ['script']`时，以下代码
 
-```HTML
+```html
 code:<script>alert(/xss/);</script>
 ```
 
 过滤后将输出
 
-```HTML
+```html
 code:
 ```
 
@@ -316,13 +340,13 @@ code:
 
 当设置 `allowCommentTag = false` 时，以下代码
 
-```HTML
+```html
 code:<!-- something --> END
 ```
 
 过滤后将输出
 
-```HTML
+```html
 code: END
 ```
 
@@ -331,7 +355,7 @@ code: END
 
 ### 允许标签以data-开头的属性
 
-```JavaScript
+```javascript
 var source = '<div a="1" b="2" data-a="3" data-b="4">hello</div>';
 var html = xss(source, {
   onIgnoreTagAttr: function (tag, name, value, isWhiteAttr) {
@@ -347,7 +371,7 @@ console.log('%s\nconvert to:\n%s', source, html);
 
 运行结果：
 
-```
+```html
 <div a="1" b="2" data-a="3" data-b="4">hello</div>
 convert to:
 <div data-a="3" data-b="4">hello</div>
@@ -355,7 +379,7 @@ convert to:
 
 ### 允许名称以x-开头的标签
 
-```JavaScript
+```javascript
 var source = '<x><x-1>he<x-2 checked></x-2>wwww</x-1><a>';
 var html = xss(source, {
   onIgnoreTag: function (tag, html, options) {
@@ -371,7 +395,7 @@ console.log('%s\nconvert to:\n%s', source, html);
 
 运行结果：
 
-```
+```html
 <x><x-1>he<x-2 checked></x-2>wwww</x-1><a>
 convert to:
 &lt;x&gt;<x-1>he<x-2 checked></x-2>wwww</x-1><a>
@@ -379,7 +403,7 @@ convert to:
 
 ### 分析HTML代码中的图片列表
 
-```JavaScript
+```javascript
 var source = '<img src="img1">a<img src="img2">b<img src="img3">c<img src="img4">d';
 var list = [];
 var html = xss(source, {
@@ -397,14 +421,14 @@ console.log('image list:\n%s', list.join(', '));
 
 运行结果：
 
-```
+```html
 image list:
 img1, img2, img3, img4
 ```
 
 ### 去除HTML标签（只保留文本内容）
 
-```JavaScript
+```javascript
 var source = '<strong>hello</strong><script>alert(/xss/);</script>end';
 var html = xss(source, {
   whiteList:          [],        // 白名单为空，表示过滤所有标签
@@ -417,11 +441,35 @@ console.log('text: %s', html);
 
 运行结果：
 
-```
+```html
 text: helloend
 ```
 
 
-## License
+## 授权协议
+
+```
+Copyright (c) 2012-2016 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
+http://ucdok.com
 
 The MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```

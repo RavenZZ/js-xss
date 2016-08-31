@@ -6,12 +6,13 @@
 
 var assert = require('assert');
 var _xss = require('../');
+var debug = require('debug')('xss:test');
 
 
 function xss (html, options) {
-  console.log(JSON.stringify(html));
+  debug(JSON.stringify(html));
   var ret = _xss(html, options);
-  console.log('\t' + JSON.stringify(ret));
+  debug('\t' + JSON.stringify(ret));
   return ret;
 }
 
@@ -55,10 +56,11 @@ describe('test XSS', function () {
 
     // 属性内的特殊字符
     assert.equal(xss('<a title="\'<<>>">'), '<a title="\'&lt;&lt;&gt;&gt;">');
-    assert.equal(xss('<a title=""">'), '&lt;a title=\"\"\"&gt;');
+    assert.equal(xss('<a title=""">'), '<a title>');
     assert.equal(xss('<a h=title="oo">'), '<a>');
-    assert.equal(xss('<a h= title="oo">'), '<a title="oo">');
+    assert.equal(xss('<a h= title="oo">'), '<a>');
     assert.equal(xss('<a title="javascript&colonalert(/xss/)">'), '<a title="javascript:alert(/xss/)">');
+    assert.equal(xss('<a title"hell aa="fdfd title="ok">hello</a>'), '<a>hello</a>');
 
     // 自动将属性值的单引号转为双引号
     assert.equal(xss('<a title=\'abcd\'>'), '<a title="abcd">');
@@ -75,6 +77,26 @@ describe('test XSS', function () {
     assert.equal(xss('<img src//>'), '<img src />');
     assert.equal(xss('<br/>'), '<br />');
     assert.equal(xss('<br />'), '<br />');
+
+    // 畸形属性格式
+    assert.equal(xss('<a target = "_blank" title ="bbb">'), '<a target="_blank" title="bbb">');
+    assert.equal(xss('<a target = "_blank" title =  title =  "bbb">'), '<a target="_blank" title="title">');
+    assert.equal(xss('<img width = 100    height     =200 title="xxx">'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title=xxx>'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title= xxx>'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title= "xxx">'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title= \'xxx\'>'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title = \'xxx\'>'),
+                     '<img width="100" height="200" title="xxx">');
+    assert.equal(xss('<img width = 100    height     =200 title= "xxx" no=yes alt="yyy">'),
+                     '<img width="100" height="200" title="xxx" alt="yyy">');
+    assert.equal(xss('<img width = 100    height     =200 title= "xxx" no=yes alt="\'yyy\'">'),
+                     '<img width="100" height="200" title="xxx" alt="\'yyy\'">');
 
   });
 
@@ -108,7 +130,7 @@ describe('test XSS', function () {
 
     assert.equal(xss('<IMG SRC=`javascript:alert("RSnake says, \'XSS\'")`>'), '<img src>');
 
-    assert.equal(xss('<IMG """><SCRI' + 'PT>alert("XSS")</SCRI' + 'PT>">'), '<img>');
+    assert.equal(xss('<IMG """><SCRI' + 'PT>alert("XSS")</SCRI' + 'PT>">'), '<img>&lt;SCRIPT&gt;alert("XSS")&lt;/SCRIPT&gt;"&gt;');
 
     assert.equal(xss('<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>'), '<img src>');
 
@@ -178,6 +200,7 @@ describe('test XSS', function () {
     assert.equal(xss('<a href="http://aa.com">'), '<a href="http://aa.com">');
     assert.equal(xss('<a href="https://aa.com">'), '<a href="https://aa.com">');
     assert.equal(xss('<a href="mailto:me@ucdok.com">'), '<a href="mailto:me@ucdok.com">');
+    assert.equal(xss('<a href="#hello">'), '<a href="#hello">');
     assert.equal(xss('<a href="other">'), '<a href>');
 
     // 这个暂时不知道怎么处理
